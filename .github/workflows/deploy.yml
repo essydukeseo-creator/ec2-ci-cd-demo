@@ -1,0 +1,29 @@
+name: Deploy Application
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Build website
+        run: |
+          mkdir -p build
+          cp index.html build/index.html
+
+      - name: Test website
+        run: |
+          test -f build/index.html
+
+      - name: Package website
+        run: |
+          cd build
+          zip -r ../website.zip .
+          
