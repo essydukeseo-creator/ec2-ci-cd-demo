@@ -1,29 +1,25 @@
-name: Deploy Application
-
-on:
-  push:
-    branches:
-      - main
-
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout source code
         uses: actions/checkout@v4
 
-      - name: Build website
+      - name: Build application
         run: |
-          mkdir -p build
-          cp index.html build/index.html
+          echo "Building application..."
+          mkdir build
+          cp index.html build/
+          echo "Build completed"
 
-      - name: Test website
+      - name: Test application
         run: |
           test -f build/index.html
+          echo "Test passed"
 
-      - name: Package website
+      - name: Package application
         run: |
           cd build
-          zip -r ../website.zip .
-          
+          zip ../website.zip index.html
+          echo "Application packaged"
