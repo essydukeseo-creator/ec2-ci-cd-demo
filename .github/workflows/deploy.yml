@@ -1,32 +1,32 @@
 name: Deploy Application
 
- on:
-   push:
- 	branches:
-   	- main
+'on':
+  push:
+    branches:
+      - main
 
- jobs:
-   build-test-package:
- 	runs-on: ubuntu-latest
+jobs:
+  build-test-package:
+    runs-on: ubuntu-latest
 
- 	steps:
-   	- name: Checkout source code
-     	uses: actions/checkout@v4
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
 
-   	- name: Build application
-     	run: |
-       	echo "Building application..."
-       	mkdir build
-       	cp index.html build/
-       	echo "Build completed"
+      - name: Build application
+        run: |
+          echo "Building application..."
+          mkdir -p build
+          cp index.html build/
+          echo "Build completed"
 
-   	- name: Test application
-     	run: |
-       	test -f build/index.html
-       	echo "Test passed"
+      - name: Test application
+        run: |
+          test -f build/index.html
+          echo "Test passed"
 
-   	- name: Package application
-     	run: |
-       	cd build
-       	zip ../website.zip index.html
-       	echo "Application packaged"
+      - name: Package application
+        run: |
+          cd build
+          zip ../website.zip index.html
+          echo "Application packaged"
