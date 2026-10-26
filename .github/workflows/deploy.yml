@@ -5,6 +5,10 @@ name: Deploy Application
     branches:
       - main
 
+permissions:
+  id-token: write
+  contents: read
+
 jobs:
   build-test-package:
     runs-on: ubuntu-latest
@@ -29,4 +33,25 @@ jobs:
         run: |
           cd build
           zip ../website.zip index.html
+
           echo "Application packaged"
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: us-east-1
+      - name: Upload package to S3
+        run: |
+          aws s3 cp website.zip s3://estyleye-ci-cd-artifacts/website.zip
+      - name: Deploy to EC2
+        run: |
+          aws ssm send-command \
+            --instance-ids "i-0792e9c9b9c11877b" \
+            --document-name "AWS-RunShellScript" \
+            --parameters 'commands=[
+              "aws s3 cp s3://estyleye-ci-cd-artifacts/website.zip /tmp/website.zip",
+              "sudo unzip -o /tmp/website.zip -d /var/www/html/",
+              "sudo systemctl restart apache2"
+            ]' \
+            --region us-east-1
